@@ -90,10 +90,10 @@ To save in a file, write:
 
 ### Generating CSV Files for Training (Optional)
 
-You can generate CSV training files using the function in pace.h.
+You can generate CSV training files using the function in `pace.h`.
 
 #### Example:
-Create a file train.cpp:
+Create a file `train.cpp`:
 ```cpp
 #include "pace.h"
 
@@ -106,7 +106,7 @@ int main() {
 Compile and run:
 ```bash
 g++ train.cpp -o train
-./train < training_instance.hgr > training.csv
+./train < training_instance.hgr > output_training.csv
 ```
 
 ## Third-party Notice
