@@ -1,0 +1,9 @@
+[submodule "extlibs/googletest"]
+	path = extlibs/googletest
+	url = https://github.com/google/googletest.git
+[submodule "extlibs/tlx"]
+	path = extlibs/tlx
+	url = https://github.com/tlx/tlx
+[submodule "extlibs/ttmath"]
+	path = extlibs/ttmath
+	url = https://github.com/networkit/ttmath
