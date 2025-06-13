@@ -63,6 +63,24 @@ To save in a file, write:
 ```
 ---
 
+## Solver Description
+
+### Overview
+
+- The solver begins by loading the instance and constructing a hypergraph from the input.
+- For each element in the hypergraph, a set of features is computed based on the graph structure, including degree-based and neighborhood-based statistics.
+- A pre-trained Random Forest classifier (exported to ONNX format) is then used to evaluate each element:
+  - If the model predicts the element is not part of the hitting set with high confidence (≥ 0.6), it is excluded from further consideration.
+  - If the model predicts the element is part of the hitting set with high confidence (≥ 0.65), it is immediately added to the solution.
+- After pruning, the solver remaps the reduced problem and solves the remaining instance using the NuSC algorithm.
+
+### Runtime Strategy
+
+- The total solver time is capped at 250 seconds to remain within the five-minute runtime constraint.
+- The pruning and preprocessing phase is timed precisely, and the remaining time is passed as a budget to NuSC.
+
+---
+
 ## Machine Learning Model (Optional)
 **This section is completely optional and is not required to use the solver.**
 
