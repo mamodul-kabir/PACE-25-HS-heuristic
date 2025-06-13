@@ -6,8 +6,8 @@ This repository contains the code for a **Hitting Set problem solver** developed
 
 ## Important Notes
 
-- The **HiGHS** library is **not** used to solve the Hitting Set instances directly.
-- HiGHS is used only to generate CSV files for training the machine learning model.
+- The **HiGHS** library is **not** used to solve the Hitting Set instances directly. It is only used to generate CSV files for training the machine learning model.
+- The solver incorporates code from the **NuSC** algorithm (see the [Third-party Notice](#third-party-notice)).
 
 ---
 
@@ -52,7 +52,7 @@ This repository contains the code for a **Hitting Set problem solver** developed
 
 ## Running the Program
 
-Run the solver on a hitting set instance file (.hgr or .txt) as:
+Run the solver on a hitting set instance file (`.hgr` or `.txt`) using:
 ```bash
 ./pace < input.hgr
 ```
@@ -63,37 +63,36 @@ To save in a file, write:
 ```
 ---
 
-## Machine Learning Model
+## Machine Learning Model (Optional)
+**This section is completely optional and is not required to use the solver.**
 
 - A pre-trained machine learning model `(random_forest_model.onnx)` is provided in the repository.
 - If you want to train the model manually, follow the steps below.
-- The files used to train the current model can be found in `training\` directory. 
+- The files used to train the current model can be found in `training/` directory. 
 
----
 
-### Training and Using the Machine Learning Model (Optional)
+### Training and Using the Machine Learning Model 
 
-1. **Create a Python virtual environment and activate it:**
+1. Create a Python virtual environment and activate it:
 	```bash
 	python3 -m venv venv
 	source venv/bin/activate
 	```
-3. **Install dependencies:**
+3. Install dependencies:
 	```bash
 	pip install -r classifier/requirements.txt
 	```
-4. **Run the training script:**
+4. Run the training script:
 	```bash
 	python classifier/random_forest_classifier.py
 	```
----
 
-### Generating CSV Files for Training (Optional)
+### Generating CSV Files for Training
 
 You can generate CSV training files using the function in `pace.h`.
 
 #### Example:
-Create a file `train.cpp`:
+Modify `src/main.cpp`:
 ```cpp
 #include "pace.h"
 
@@ -105,9 +104,11 @@ int main() {
 ```
 Compile and run:
 ```bash
-g++ train.cpp -o train
-./train < training_instance.hgr > output_training.csv
+cd PACE-25-HS-heuristic/build
+make -j$(nproc)
+./pace < training_instance.hgr > output_training.csv
 ```
+---
 
 ## Third-party Notice
 
