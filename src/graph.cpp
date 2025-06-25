@@ -84,8 +84,8 @@ void build_graph(vector<vector<int>> &sets, int &nElems){
 
 		lcc[i] = smooth(lcc[i]);
 	}
-
 	run();
+	cerr<<"feature calculation done\n"; 
 }
 
 double smooth(double r){

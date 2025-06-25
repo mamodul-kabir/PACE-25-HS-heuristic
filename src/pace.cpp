@@ -86,38 +86,40 @@ vector<float> get_vector(int r){
 	return ans; 
 }
 
-void do_mapping(){
-	int idx = 1, nSets = sets.size();
-	updElem = 0;
-	for(int i = 1; i <= nElems; i++){
-		if(!delElem[i]){
-			mapp[i] = idx; 
-			rmapp[idx] = i; 
-			idx++;  
-			updElem++; 
-		}
-	}
-	updSet = 0; 
-	idx = 1; 
-	for(int i = 0; i < nSets; i++){
-		if(!delSet[i]){
-			setMap[i] = idx; 
-			rsetMap[idx] = i; 
-			idx++; 
-			updSet++; 
-		}
-	}
-	//make a new member type set cover
-	for(int i = 1; i <= updElem; i++){
-		vector<int> temp;
-		for(int r: member[rmapp[i]]){
-			if(!delSet[r]){
-				temp.push_back(setMap[r]); 
-			}
-		}
-		notun.push_back(temp);
-	}
-	return; 
+void do_mapping() {
+    int nSets = sets.size();
+
+    updSet = 0;
+    int set_idx = 1;
+    for (int i = 0; i < nSets; i++) {
+        if (!delSet[i]) {
+            setMap[i] = set_idx;
+            rsetMap[set_idx] = i;
+            set_idx++;
+            updSet++;
+        }
+    }
+
+    updElem = 0;
+    int elem_idx = 1;
+    for (int i = 1; i <= nElems; i++) {
+        if (!delElem[i]) {
+            vector<int> temp;
+            for (int r : member[i]) {
+                if (!delSet[r]) {
+                    temp.push_back(setMap[r]);  // Now safe
+                }
+            }
+
+            if (!temp.empty()) {
+                notun.push_back(temp);
+                mapp[i] = elem_idx;
+                rmapp[elem_idx] = i;
+                elem_idx++;
+                updElem++;
+            }
+        }
+    }
 }
 
 void show(){
@@ -166,17 +168,22 @@ void init(){
         if(result.label == 0 && pp.second >= zero_thresh) add_zero(pp);
         else if(result.label == 1 && pp.second >= one_thresh) add_one(pp); 
     }
-
+    cerr<<"prediction done\n";
     prune(sets, member, final, nElems); 
     do_mapping();
+   	cerr<<"pruning and mapping done\n"; 
     auto finish = std::chrono::high_resolution_clock::now();
 	double secs = std::chrono::duration<double>(finish - start).count();
 	int remaining =  max((int ) floor(lim - secs), 15);
 	//show();
+	cerr<<"running nusc for "<<remaining<<" seconds\n"; 
 	run_nusc(notun, res, updElem, updSet, remaining); 
 	mergeFromNuSC();
 	//solve_hitting_set(notun, updElem, remaining);
 	printResult();
+	//produce_tc(notun, updElem, updSet); 
+	//for(int i = 1; i <= nElems; i++) if(!delElem[i]) final.insert(i);
+	//printResult();
 	return; 
 }
 

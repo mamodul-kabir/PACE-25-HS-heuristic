@@ -42,23 +42,23 @@ void prune(const vector<vector<int>> &sets, const vector<unordered_set<int>> &me
 	for(auto r: zeros){
 		int breaker = -1; 
 		bool becomesEmpty = false; 
-		for(int p: member[r.first]){
-			if(setSize[p] == 1){
-				becomesEmpty = true; 
-				breaker = p; 
-				break; 
-			}
-			else setSize[p] -= 1; 
+		vector<int> changed_sets;
+		for (int p : member[r.first]) {
+		    if (delSet[p]) continue;
+		    if (setSize[p] == 1) {
+		        becomesEmpty = true;
+		        breaker = p;
+		        break;
+		    } else {
+		        setSize[p] -= 1;
+		        changed_sets.push_back(p);
+		    }
 		}
-		if(becomesEmpty){
-			for(int p: member[r.first]){
-				if(p == breaker) break; 
-				else{
-					setSize[p] += 1; 
-				}
-			}
+		if (becomesEmpty) {
+		    for (int p : changed_sets) setSize[p] += 1;
+		} else {
+		    delElem[r.first] = 1;
 		}
-		else delElem[r.first] = 1; 
 	}
 }
 
