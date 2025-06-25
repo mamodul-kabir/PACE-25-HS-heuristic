@@ -63,6 +63,14 @@ To save in a file, write:
 ```
 ---
 
+## Machine Learning Model (Optional)
+**This section is completely optional and is not required to use the solver.**
+
+- A pre-trained machine learning model `(random_forest_model.onnx)` is provided in the repository.Add commentMore actions
+- If you want to train the model manually, follow the steps below.
+- The files used to train the current model can be found in `training/` directory. 
+
+
 ### Training and Using the Machine Learning Model 
 
 1. Create a Python virtual environment and activate it:
