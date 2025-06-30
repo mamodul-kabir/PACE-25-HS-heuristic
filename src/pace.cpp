@@ -22,7 +22,7 @@ using namespace std;
 int nElems, updElem, updSet;
 vector<vector<int>> sets, notun; 
 vector<unordered_set<int>> member;
-unordered_map<int, int> mapp, rmapp, setMap, rsetMap;
+unordered_map<int, int> mapp, rmapp;
 vector<int> res; 
 unordered_set<int> final;
 
@@ -86,38 +86,31 @@ vector<float> get_vector(int r){
 	return ans; 
 }
 
-void do_mapping() {
-    int nSets = sets.size();
 
+void do_mapping(){
+	updElem = 0; 
+	int idx = 1; 
+	for(int i = 1; i <= nElems; i++){
+		if(!delElem[i]){
+			mapp[i] = idx; 
+			rmapp[idx] = i; 
+			idx++; 
+			updElem++; 
+		}
+	}
+
+	int nSets = sets.size();
     updSet = 0;
-    int set_idx = 1;
     for (int i = 0; i < nSets; i++) {
         if (!delSet[i]) {
-            setMap[i] = set_idx;
-            rsetMap[set_idx] = i;
-            set_idx++;
-            updSet++;
-        }
-    }
-
-    updElem = 0;
-    int elem_idx = 1;
-    for (int i = 1; i <= nElems; i++) {
-        if (!delElem[i]) {
             vector<int> temp;
-            for (int r : member[i]) {
-                if (!delSet[r]) {
-                    temp.push_back(setMap[r]);  // Now safe
-                }
+            for(int r: sets[i]){
+            	if(!delElem[r]){
+            		temp.push_back(mapp[r]); 
+            	}
             }
-
-            if (!temp.empty()) {
-                notun.push_back(temp);
-                mapp[i] = elem_idx;
-                rmapp[elem_idx] = i;
-                elem_idx++;
-                updElem++;
-            }
+            notun.push_back(temp); 
+            updSet++; 
         }
     }
 }
@@ -131,17 +124,10 @@ void show(){
 	}
 }
 
+
 void mergeFromNuSC() {
-    for (int chosen_new_set_idx : res) {
-        auto it = rsetMap.find(chosen_new_set_idx);
-        if (it != rsetMap.end()) {
-            int original_set_idx = it->second;
-            for (int original_elem_id : sets[original_set_idx]) {
-                if (!delElem[original_elem_id]) {
-                    final.insert(original_elem_id);
-                }
-            }
-        }
+    for (int r : res) {
+    	final.insert(rmapp[r]);         
     }
 }
 
@@ -176,8 +162,8 @@ void init(){
 	double secs = std::chrono::duration<double>(finish - start).count();
 	int remaining =  max((int ) floor(lim - secs), 15);
 	//show();
-	cerr<<"running nusc for "<<remaining<<" seconds\n"; 
-	run_nusc(notun, res, updElem, updSet, remaining); 
+	//cerr<<"running nusc for "<<remaining<<" seconds\n"; 
+	run_nusc(notun, res, updSet, updElem, remaining); 
 	mergeFromNuSC();
 	//solve_hitting_set(notun, updElem, remaining);
 	printResult();
