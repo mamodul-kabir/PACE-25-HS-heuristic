@@ -18,11 +18,10 @@ void add_one(pair<int,float> r){
 }
 
 bool compareDesc(const std::pair<int, float>& a, const std::pair<int, float>& b) {
-    return a.second > b.second; // Sorts by second element (float) in descending order
+    return a.second > b.second;
 }
 
 void prune(const vector<vector<int>> &sets, const vector<unordered_set<int>> &member, unordered_set<int> &final, const int &nElems){
-	//sort(ones.begin(), ones.end(), compareDesc);
 	sort(zeros.begin(), zeros.end(), compareDesc);
 
 	int nSets = sets.size(); 
@@ -45,7 +44,7 @@ void prune(const vector<vector<int>> &sets, const vector<unordered_set<int>> &me
 		vector<int> changed_sets;
 		for (int p : member[r.first]) {
 		    if (delSet[p]) continue;
-		    if (setSize[p] == 1) {
+		    if (setSize[p] <= 3) {
 		        becomesEmpty = true;
 		        breaker = p;
 		        break;

@@ -27,10 +27,6 @@ MLPredictor::MLPredictor(const std::string& model_path)
     for (const auto& name : output_names_str) {
         output_names_char.push_back(name.c_str());
     }
-
-    //std::cerr << "Model initialized successfully: " << model_path << "\n";
-    //std::cerr << "  Input Name: " << input_name << "\n";
-    //std::cerr << "  Output Names: " << output_names_str[0] << ", " << output_names_str[1] << "\n";
 }
 
 PredictionResult MLPredictor::predict(const std::vector<float>& input_data) {

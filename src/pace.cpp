@@ -7,7 +7,6 @@
 #include <unordered_map>
 
 #include "graph.h"
-#include "highs.h"
 #include "netkit.h"
 #include "mlpredict.h"
 #include "prune.h"
@@ -19,20 +18,19 @@
 
 using namespace std;
 
-int nElems, updElem, updSet;
+int nElems, nSets, updElem, updSet;
 vector<vector<int>> sets, notun; 
 vector<unordered_set<int>> member;
 unordered_map<int, int> mapp, rmapp;
-vector<int> res; 
+vector<int> res, inc; 
 unordered_set<int> final;
 
 void loadInp(){
 	string dumm, str;
-	int s;
 	getline(cin, str);
 	{
 		stringstream ss(str); 
-		ss>>dumm>>dumm>>nElems>>s; 
+		ss>>dumm>>dumm>>nElems>>nSets; 
 	}
 	member.resize(nElems + 1); 
 	int ind = 0;
@@ -57,11 +55,20 @@ float to_float(T value) {
 
 void generate_csv(double t_limit){
 	loadInp();
+	auto start = std::chrono::high_resolution_clock::now();
 	build_graph(sets, nElems);
-	solve_hitting_set(sets, nElems, t_limit);
-	int n = deg.size();
+
+	auto finish = std::chrono::high_resolution_clock::now();
+	double secs = std::chrono::duration<double>(finish - start).count();
+	cerr<<"time taken = "<<secs<<endl; 
+	int lim = floor(t_limit);
+	run_nusc(sets, res, nSets, nElems, lim);
+
+	inc.resize(nElems + 1, 0); 
+	for(int r: res) inc[r] = 1;  
+
 	cout<<fixed <<setprecision(6);
-	for(int i = 1; i < n; i++){
+	for(int i = 1; i <= nElems; i++){
 		//cout<<i<<"\t";
 		cout<<deg_elem[i]<<",";
 		cout<<deg_set[i]<<",";
@@ -70,18 +77,15 @@ void generate_csv(double t_limit){
 		cout<<sum_nei_degree[i]<<",";
 		cout<<avg_deg[i]<<","; 
 		cout<<smooth(lcc[i])<<",";
-		cout<<smooth(btwScores[i - 1])<<",";
-		cout<<smooth(clsScores[i - 1])<<",";
 		cout<<coreNumbers[i - 1]<<",";
-		cout<<included[i]<<"\n";
+		cout<<inc[i]<<"\n";
 	}
 }
 
 vector<float> get_vector(int r){
 	vector<float> ans = {
 		to_float(deg_elem[r]), to_float(deg_set[r]), to_float(min_deg[r]), to_float(max_deg[r]), to_float(sum_nei_degree[r]), 
-		to_float(avg_deg[r]), to_float(smooth(lcc[r])), to_float(smooth(btwScores[r - 1])), to_float(smooth(clsScores[r - 1])),
-		to_float(coreNumbers[r])
+		to_float(avg_deg[r]), to_float(smooth(lcc[r])), to_float(coreNumbers[r])
 	};
 	return ans; 
 }
@@ -99,7 +103,6 @@ void do_mapping(){
 		}
 	}
 
-	int nSets = sets.size();
     updSet = 0;
     for (int i = 0; i < nSets; i++) {
         if (!delSet[i]) {
@@ -116,7 +119,6 @@ void do_mapping(){
 }
 
 void show(){
-	//for(int r: final) cout<<r sp; cout el; cout el; 
 	cout<<updElem sp<<updSet el; 
 	for(auto v: notun){
 		cout<<v.size() el; 
@@ -142,15 +144,14 @@ void init(){
 	auto start = std::chrono::high_resolution_clock::now();
 	build_graph(sets, nElems); 
 	    
-	double lim = 290; 
-    float one_thresh = 0.65, zero_thresh = 0.6;
+	double lim = 295; 
+    float one_thresh = 0.95, zero_thresh = 0.95;
 
-    MLPredictor model("../random_forest_model.onnx");
+    MLPredictor model("../rf_model.onnx");
     for(int i = 1; i <= nElems; i++){
         vector<float> input_vec = get_vector(i);
         PredictionResult result = model.predict(input_vec);
         pair<int, float> pp = {i, result.probabilities[result.label]};
-        //cout<<result.label<<","<<pp.second el;
         if(result.label == 0 && pp.second >= zero_thresh) add_zero(pp);
         else if(result.label == 1 && pp.second >= one_thresh) add_one(pp); 
     }
@@ -162,21 +163,9 @@ void init(){
 	double secs = std::chrono::duration<double>(finish - start).count();
 	int remaining =  max((int ) floor(lim - secs), 15);
 	//show();
-	//cerr<<"running nusc for "<<remaining<<" seconds\n"; 
+	cerr<<"running nusc for "<<remaining<<" seconds\n"; 
 	run_nusc(notun, res, updSet, updElem, remaining); 
 	mergeFromNuSC();
-	//solve_hitting_set(notun, updElem, remaining);
 	printResult();
-	//produce_tc(notun, updElem, updSet); 
-	//for(int i = 1; i <= nElems; i++) if(!delElem[i]) final.insert(i);
-	//printResult();
 	return; 
 }
-
-/*
-	auto start = std::chrono::high_resolution_clock::now();
-	
-	auto finish = std::chrono::high_resolution_clock::now();
-	double secs = std::chrono::duration<double>(finish - start).count();
-	cout<<"time taken = "<<secs<<" seconds\n";	
-*/

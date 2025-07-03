@@ -4,12 +4,6 @@ This repository contains the code for a **Hitting Set problem solver** developed
 
 ---
 
-## Important Notes
-
-- The **HiGHS** library is **not** used to solve the Hitting Set instances directly. It is only used to generate CSV files for training the machine learning model.
-- The solver incorporates code from the **NuSC** algorithm (see the [Third-party Notice](#third-party-notice)).
-
----
 
 ## Requirements
 
@@ -27,21 +21,14 @@ This repository contains the code for a **Hitting Set problem solver** developed
    cd PACE-25-HS-heuristic
    ```
 
-2. **Build HiGHS:**
+2. **Build NetworKit:**
 	```bash
-	cd HiGHS
+	cd networkit
 	mkdir build && cd build
 	cmake ..
 	make -j$(nproc)
 	```
-3. **Build NetworKit:**
-	```bash
-	cd ../../networkit
-	mkdir build && cd build
-	cmake ..
-	make -j$(nproc)
-	```
-4. **Build the main project:**
+3. **Build the main project:**
 	```bash
 	cd ../..
 	mkdir build && cd build
@@ -66,7 +53,7 @@ To save in a file, write:
 ## Machine Learning Model (Optional)
 **This section is completely optional and is not required to use the solver.**
 
-- A pre-trained machine learning model `(random_forest_model.onnx)` is provided in the repository.Add commentMore actions
+- A pre-trained machine learning model `(rf_model.onnx)` is provided in the repository.
 - If you want to train the model manually, follow the steps below.
 - The files used to train the current model can be found in `training/` directory. 
 
@@ -84,7 +71,8 @@ To save in a file, write:
 	```
 4. Run the training script:
 	```bash
-	python classifier/random_forest_classifier.py
+	python3 classifier/random_forest_classifier.py
+	python3 classifier/convert_rf_to_onnx.py
 	```
 
 ### Generating CSV Files for Training
@@ -97,7 +85,6 @@ Modify `src/main.cpp`:
 #include "pace.h"
 
 int main() {
-    loadInp();
     generate_csv(3600.0);  // time limit in seconds, e.g. 1 hour
     return 0;
 }
@@ -114,7 +101,6 @@ make -j$(nproc)
 
 This project uses third-party components:
 
-- **HiGHS** (https://github.com/ERGO-Code/HiGHS) – MIT License
 - **NetworKit** (https://github.com/networkit/networkit) – MIT License
 - **ONNX Runtime** (https://github.com/microsoft/onnxruntime) – MIT License
 - **NuSC-Algorithm / wscp.h** (https://github.com/chuanluocs/NuSC-Algorithm) – GPL-3.0 License

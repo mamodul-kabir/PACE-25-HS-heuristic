@@ -14,14 +14,6 @@ set_target_properties(networkit PROPERTIES
     IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/networkit/build/libnetworkit.so
 )
 
-# ====== HiGHS setup ======
-set(HIGHS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/HiGHS/highs")
-set(HIGHS_LIB_DIR "${CMAKE_SOURCE_DIR}/HiGHS/build/lib")
-
-include_directories(${HIGHS_INCLUDE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/HiGHS/build)
-link_directories(${HIGHS_LIB_DIR})
-
 # ====== ONNX Runtime setup ======
 set(ORT_DIR ${CMAKE_SOURCE_DIR}/onnxruntime-linux-x64-1.22.0)
 
@@ -37,8 +29,6 @@ add_executable(pace
     src/graph.h
     src/netkit.cpp
     src/netkit.h
-    src/highs.cpp
-    src/highs.h
     src/mlpredict.cpp
     src/mlpredict.h
     src/prune.h
@@ -51,6 +41,5 @@ add_executable(pace
 # ====== Link libraries ======
 target_link_libraries(pace
     networkit
-    highs
     onnxruntime
 )

@@ -4,6 +4,6 @@
 using namespace std; 
 
 int main(){ 
-	init();
+	init(); 
 	return 0; 
 }
