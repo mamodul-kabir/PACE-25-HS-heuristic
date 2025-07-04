@@ -144,7 +144,7 @@ void init(){
 	auto start = std::chrono::high_resolution_clock::now();
 	build_graph(sets, nElems); 
 	    
-	double lim = 295; 
+	double lim = 290; 
     float one_thresh = 0.95, zero_thresh = 0.95;
 
     MLPredictor model("../rf_model.onnx");

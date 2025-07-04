@@ -9,16 +9,21 @@ This repository contains the code for a **Hitting Set problem solver** developed
 
 - C++ Standard: C++23 (recommended)
 - CMake minimum version: 3.10
+- Git LFS: Required to download large model files (e.g., `.onnx`)
 
 ---
 
 ## Installation
 
-1. **Clone the repository:**
+1. **Clone the repository and pull LFS files:**
 
    ```bash
    git clone https://github.com/mamodul-kabir/PACE-25-HS-heuristic.git
    cd PACE-25-HS-heuristic
+
+   # Initialize Git LFS and pull large files
+   git lfs install
+   git lfs pull
    ```
 
 2. **Build NetworKit:**
